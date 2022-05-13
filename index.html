@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Onur Yazkili 20360859099</title>
+    </head>
+    <body align ="center">
+        <canvas id="weboyun" width="800" height="600"></canvas>
+        <script>
+            const cnvs = document.getElementById('weboyun')
+const cntxt = cnvs.getContext('2d')
+
+const zemin = (x,y,w,h,renk) => {
+    cntxt.fillStyle = renk
+    cntxt.fillRect(x,y,w,h)
+}
+
+const daire = (x,y,r,renk) => {
+    cntxt.fillStyle = renk
+    cntxt.beginPath()
+    cntxt.arc(x,y,r,0,2 * Math.PI,false)
+    cntxt.closePath()
+    cntxt.fill()
+}
+
+
+const skor = (text,x,y,renk) => {
+    cntxt.fillStyle = renk
+    cntxt.font = '60px sans-comic'
+    cntxt.fillText(text,x,y)
+}
+
+const mesaj = {
+    text : 'Tebrikler',
+    x: cnvs.width/2 -100,
+    y: cnvs.height/2 + 100,
+    renk : '#ce181e',
+}
+
+const oyuncu = {
+    x: 50,
+    y: cnvs.height/2 -50,
+    w: 25,
+    h: 100,
+    renk: '#0c3866',
+}
+
+const hedef1 = {
+    x: 790,
+    y: 75,
+    w: 10,
+    h: 100,
+    renk: '#0c3866',
+}
+
+const hedef2 = {
+    x: 790,
+    y: 225,
+    w: 10,
+    h: 100,
+    renk: '#0c3866',
+}
+
+const hedef3 = {
+    x: 790,
+    y: 375,
+    w: 10,
+    h: 100,
+    renk: '#0c3866',
+}
+
+const duvar1 = {
+    x: 795,
+    y: 0,
+    w: 5,
+    h: 600,
+    renk : '#ce181e',
+}
+
+const pak = {
+    x: cnvs.width/2,
+    y: cnvs.height/2,
+    r: 10,
+    renk: '#000',
+    hiz: 5,
+    hizX: -3,
+    hizY: -4,
+    dur: true
+}
+
+const hareket = (e) => {
+    let a = cnvs.getBoundingClientRect()
+    oyuncu.y = e.clientY - a.top - oyuncu.h/2
+    pak.dur = false
+}
+
+cnvs.addEventListener('mousemove',hareket)
+
+const sifirla =() => {
+    pak.x = cnvs.width/2
+    pak.y = cnvs.height/2
+    pak.hiz = 5,
+    pak.hizX = -3,
+    pak.hizY = -4,
+    pak.dur = true
+    hedef1.renk = '#0c3866'
+    hedef2.renk = '#0c3866'
+    hedef3.renk = '#0c3866'
+    mesaj.renk = '#ce181e'
+}
+
+const yenile = () => {
+    if(!pak.dur) {
+        pak.x = pak.x+pak.hizX
+        pak.y = pak.y+pak.hizY
+    }
+    if (pak.y + pak.r > cnvs.height || pak.y - pak.r < 0) {
+        pak.hizY = -pak.hizY
+    }
+    
+    if(pak.y - pak.r < oyuncu.y + oyuncu.h && pak.y + pak.r >  oyuncu.y && pak.x - pak.r < oyuncu.x + oyuncu.w && pak.x + pak.r > oyuncu.x){
+        pak.hizX = -pak.hizX
+        let interY = pak.y - (oyuncu.y + oyuncu.h/2)
+        interY /= oyuncu.h/2
+        let maxsekme = Math.PI / 3 
+        let sekmeaci = interY * maxsekme
+
+        pak.hizX = pak.hiz * Math.cos(sekmeaci)
+        pak.hizY = pak.hiz * Math.sin(sekmeaci)
+
+        pak.hiz +=2
+    }
+
+    if(pak.y - pak.r < hedef1.y + hedef1.h && pak.y + pak.r > hedef1.y && pak.x - pak.r < hedef1.x + hedef1.w && pak.x + pak.r > hedef1.x){
+        pak.hizX = -pak.hizX,
+        hedef1.renk = '#ce181e'
+    }
+
+    if(pak.y - pak.r < hedef2.y + hedef2.h && pak.y + pak.r > hedef2.y && pak.x - pak.r < hedef2.x + hedef2.w && pak.x + pak.r > hedef2.x){
+        pak.hizX = -pak.hizX,
+        hedef2.renk = '#ce181e'
+    }
+
+    if(pak.y - pak.r < hedef3.y + hedef3.h && pak.y + pak.r > hedef3.y && pak.x - pak.r < hedef3.x + hedef3.w && pak.x + pak.r > hedef3.x){
+        pak.hizX = -pak.hizX,
+        hedef3.renk = '#ce181e'
+    }
+
+    if (pak.x + pak.r > duvar1.x) {
+        pak.hizX = -pak.hizX
+    }
+    
+    if(pak.x < 0){
+        sifirla()
+    }
+
+    if (hedef1.renk == '#ce181e' && hedef2.renk == '#ce181e' && hedef3.renk == '#ce181e') {
+        mesaj.renk = '#0c3866'
+    }
+}
+
+const sahne = () => {
+    zemin(0,0,cnvs.width,cnvs.height,'#ce181e')
+    zemin(oyuncu.x,oyuncu.y,oyuncu.w,oyuncu.h,oyuncu.renk)
+    zemin(hedef1.x,hedef1.y,hedef1.w,hedef1.h,hedef1.renk)
+    zemin(hedef2.x,hedef2.y,hedef2.w,hedef2.h,hedef2.renk)
+    zemin(hedef3.x,hedef3.y,hedef3.w,hedef3.h,hedef3.renk)
+    zemin(duvar1.x,duvar1.y,duvar1.w,duvar1.h,duvar1.renk)
+    daire(pak.x,pak.y,pak.r,pak.renk)
+    skor(mesaj.text,mesaj.x,mesaj.y,mesaj.renk)
+}
+
+const oyun = () => {
+    yenile()
+    sahne()
+}
+
+const fps = 50
+setInterval(oyun,1000/fps)
+        </script>
+    </body>
+</html>
